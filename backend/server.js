@@ -4,6 +4,14 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 
+// Prevent crash on unhandled errors (e.g., Puppeteer navigation/execution context detaches)
+process.on('unhandledRejection', (reason, p) => {
+  console.error('Unhandled Rejection at:', p, 'reason:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+
 import { PORT, EXCEL_PATH } from './config.js';
 import databaseService from './services/database.js';
 import excelService from './services/excel.js';
