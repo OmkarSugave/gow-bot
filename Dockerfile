@@ -1,9 +1,10 @@
-# Use official lightweight Node.js LTS image
+# Use official Node.js LTS image
 FROM node:20-slim
 
-# Install system dependencies for Puppeteer & Chromium
+# Install system dependencies for Puppeteer & Chromium + git
 RUN apt-get update && apt-get install -y \
     chromium \
+    git \
     fonts-ipafont-gothic \
     fonts-wqy-zenhei \
     fonts-thai-tlwg \
@@ -19,16 +20,19 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 ENV PORT=5000
 ENV NODE_ENV=production
 
-# Create app directory
+# Create app directories
 WORKDIR /app
+RUN mkdir -p /app/backend /app/frontend
 
-# Copy package configurations
+# Copy package configurations explicitly
 COPY package.json package-lock.json* ./
-COPY backend/package.json ./backend/
-COPY frontend/package.json ./frontend/
+COPY backend/package.json ./backend/package.json
+COPY frontend/package.json ./frontend/package.json
 
-# Install root, backend, and frontend dependencies
-RUN npm run setup
+# Install dependencies step-by-step
+RUN npm install --omit=dev
+RUN cd backend && npm install
+RUN cd frontend && npm install
 
 # Copy the rest of the application source code
 COPY . .
