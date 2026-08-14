@@ -1,0 +1,29 @@
+# fly.toml configuration file for gow-bot
+
+app = 'gow-bot'
+primary_region = 'sin' # Singapore (Change to 'ams', 'iad', etc. based on preference)
+
+[build]
+
+[env]
+  DATA_DIR = '/app/data'
+  PORT = '5000'
+  NODE_ENV = 'production'
+
+[[mounts]]
+  source = 'growbuzz_data'
+  destination = '/app/data'
+  initial_size = '1gb'
+
+[http_service]
+  internal_port = 5000
+  force_https = true
+  # Keep the server running 24/7; do not sleep when there is no website traffic
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '512mb' # Fly.io free tier allocation
