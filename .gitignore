@@ -1,0 +1,23 @@
+# Dependency directories
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Production builds
+frontend/dist/
+
+# Local cache and authentication sessions
+.wwebjs_auth/
+
+# Dynamic data files (we ignore these so your cloud database starts clean)
+leads.xlsx
+
+# Log files
+*.log
+
+# Environment variables
+.env
+
+# System files
+.DS_Store
+Thumbs.db

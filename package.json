@@ -1,0 +1,16 @@
+{
+  "name": "growbuzz-whatsapp-bot",
+  "version": "1.0.0",
+  "description": "WhatsApp Bot & Lead Management Dashboard for GrowBuzz",
+  "main": "backend/server.js",
+  "scripts": {
+    "setup": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "start": "cd backend && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
