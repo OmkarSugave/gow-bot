@@ -9,6 +9,7 @@ import databaseService from './services/database.js';
 import excelService from './services/excel.js';
 import emailService from './services/email.js';
 import whatsappService from './services/whatsapp.js';
+import googleSheetsService from './services/googleSheets.js';
 import mockWhatsappService from './mockWhatsapp.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -109,6 +110,9 @@ app.post('/api/leads', async (req, res) => {
 
     // Add to Excel File
     await excelService.addLeadToExcel(lead);
+
+    // Sync to Google Sheets
+    await googleSheetsService.syncLeadToGoogleSheets(lead);
 
     // Send Emails to Client & Admin
     await emailService.sendLeadNotificationEmails(lead);

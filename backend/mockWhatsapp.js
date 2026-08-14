@@ -1,6 +1,7 @@
 import databaseService from './services/database.js';
 import excelService from './services/excel.js';
 import emailService from './services/email.js';
+import googleSheetsService from './services/googleSheets.js';
 
 const mockSessions = new Map();
 
@@ -90,19 +91,43 @@ class MockWhatsAppService {
         }
 
         session.email = body;
-        const phone = "+919850774901"; // Simulated phone number
+        session.state = 'AWAITING_PHONE';
+        mockSessions.set(userId, session);
+        
+        const currentPhone = "+919850774901";
+        replies.push(`Thanks! Now, please reply with your *Phone Number* (or reply *'same'* to use your WhatsApp number *${currentPhone}*):`);
+        break;
+      }
+
+      case 'AWAITING_PHONE': {
+        let finalPhone = body;
+        const currentPhone = "+919850774901";
+        if (bodyLower === 'same' || bodyLower === 'yes' || bodyLower === 'same number') {
+          finalPhone = currentPhone;
+        } else {
+          const digitsOnly = body.replace(/\D/g, '');
+          if (digitsOnly.length < 8) {
+            replies.push(`That doesn't look like a valid phone number. Please reply with your *Phone Number* (or reply *'same'* to use *${currentPhone}*):`);
+            return replies;
+          }
+        }
+
+        session.phone = finalPhone;
 
         // Save Lead to DB
         const lead = await databaseService.addLead({
           name: session.name,
           email: session.email,
-          phone: phone,
+          phone: session.phone,
           service: session.service,
           source: 'Simulator'
         });
 
         // Update Excel Sheet
         await excelService.addLeadToExcel(lead);
+
+        // Sync to Google Sheets
+        await googleSheetsService.syncLeadToGoogleSheets(lead);
 
         // Send Email Notifications
         await emailService.sendLeadNotificationEmails(lead);
@@ -117,6 +142,7 @@ class MockWhatsAppService {
         session.service = null;
         session.name = null;
         session.email = null;
+        session.phone = null;
         mockSessions.set(userId, session);
         break;
       }

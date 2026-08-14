@@ -6,6 +6,7 @@ import { ROOT_DIR, DATA_DIR } from '../config.js';
 import databaseService from './database.js';
 import excelService from './excel.js';
 import emailService from './email.js';
+import googleSheetsService from './googleSheets.js';
 
 const { Client, LocalAuth } = pkg;
 
@@ -221,19 +222,43 @@ class WhatsAppService {
         }
 
         session.email = body;
-        const phone = this.formatPhoneNumber(from);
+        session.state = 'AWAITING_PHONE';
+        this.sessions.set(from, session);
+        
+        const currentPhone = this.formatPhoneNumber(from);
+        await msg.reply(`Thanks! Now, please reply with your *Phone Number* (or reply *'same'* to use your WhatsApp number *${currentPhone}*):`);
+        break;
+      }
+
+      case 'AWAITING_PHONE': {
+        let finalPhone = body;
+        if (bodyLower === 'same' || bodyLower === 'yes' || bodyLower === 'same number') {
+          finalPhone = this.formatPhoneNumber(from);
+        } else {
+          // Validate that the user entered a phone-like string
+          const digitsOnly = body.replace(/\D/g, '');
+          if (digitsOnly.length < 8) {
+            await msg.reply(`That doesn't look like a valid phone number. Please reply with your *Phone Number* (or reply *'same'* to use *${this.formatPhoneNumber(from)}*):`);
+            return;
+          }
+        }
+
+        session.phone = finalPhone;
 
         // Save Lead to DB
         const lead = await databaseService.addLead({
           name: session.name,
           email: session.email,
-          phone: phone,
+          phone: session.phone,
           service: session.service,
           source: 'WhatsApp'
         });
 
         // Update Excel Sheet
         await excelService.addLeadToExcel(lead);
+
+        // Sync to Google Sheets
+        await googleSheetsService.syncLeadToGoogleSheets(lead);
 
         // Send Email Notifications
         await emailService.sendLeadNotificationEmails(lead);
@@ -248,6 +273,7 @@ class WhatsAppService {
         session.service = null;
         session.name = null;
         session.email = null;
+        session.phone = null;
         this.sessions.set(from, session);
         break;
       }

@@ -3,6 +3,7 @@
     "businessName": "GrowBuzz",
     "welcomeMessage": "Hello! Welcome to GrowBuzz. 🐝\nWe help local businesses (hotels, cafés, restaurants, retail shops) get more customers with high-converting websites, targeted Meta/Google ads, and WhatsApp automation.\n\nHere are the services we provide:\n{services}\n\nReply with the number (e.g. 1, 2, or 3) of the service you are interested in!",
     "registrationSuccessMessage": "Thank you! Your registration is complete. Our team will contact you for further details and procedures within the next 6-9 working hours. 🚀",
+    "googleSheetsWebhook": "",
     "smtp": {
       "host": "smtp.gmail.com",
       "port": 587,
@@ -10,7 +11,7 @@
       "user": "",
       "pass": "",
       "from": "GrowBuzz Leads <leads@growbuzz.online>",
-      "adminEmail": "omkar@growbuzz.online"
+      "adminEmail": "growbuzz45@gmail.com"
     }
   },
   "services": [
@@ -30,24 +31,5 @@
       "description": "Smart, 24/7 automated chat assistants that handle booking tables, orders, and customer queries."
     }
   ],
-  "leads": [
-    {
-      "id": "lead-1786691515992-6ba9dc1ov",
-      "name": "omkar",
-      "email": "omkar@gmail.com",
-      "phone": "+919850774901",
-      "service": "High-Converting Websites",
-      "source": "Simulator",
-      "timestamp": "2026-08-14T07:11:55.992Z"
-    },
-    {
-      "id": "lead-1786674250271-rtzliuwvm",
-      "name": "Omkar Prasad",
-      "email": "omkar@example.com",
-      "phone": "+919850774901",
-      "service": "High-Converting Websites",
-      "source": "Simulator",
-      "timestamp": "2026-08-14T02:24:10.271Z"
-    }
-  ]
+  "leads": []
 }

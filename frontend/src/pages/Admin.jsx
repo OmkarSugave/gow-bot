@@ -770,6 +770,79 @@ function SettingsTab({ config, onRefresh }) {
       </div>
 
       <h3 style={{ fontSize: '16px', margin: '20px 0 10px 0', borderBottom: '1px solid var(--color-border)', paddingBottom: '6px' }}>
+        📊 Google Sheets Sync (100% Free & Permanent)
+      </h3>
+      <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '12px' }}>
+        If you deploy on Render Free Tier, this option keeps your database sync'd forever on Google Drive for free.
+      </p>
+      
+      <div className="form-group">
+        <label className="form-label">Google Sheets Webhook URL</label>
+        <input
+          type="text"
+          name="googleSheetsWebhook"
+          value={formData.googleSheetsWebhook || ''}
+          onChange={handleChange}
+          placeholder="https://script.google.com/macros/s/.../exec"
+          className="form-input"
+        />
+      </div>
+
+      <div style={{ backgroundColor: '#f8fafc', padding: '16px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)', fontSize: '13.5px', marginBottom: '20px', color: 'var(--color-text-main)' }}>
+        <h4 style={{ fontSize: '14.5px', marginBottom: '8px', fontWeight: 'bold' }}>📋 How to setup your Google Sheet:</h4>
+        <ol style={{ paddingLeft: '16px', marginBottom: '12px', lineHeight: '1.6' }}>
+          <li style={{ marginBottom: '4px' }}>Open <a href="https://sheets.new" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline', color: 'var(--color-primary-hover)', fontWeight: 'bold' }}><strong>sheets.new</strong></a> to create a new Google Sheet.</li>
+          <li style={{ marginBottom: '4px' }}>Go to the top menu ➡️ <strong>Extensions</strong> ➡️ <strong>Apps Script</strong>.</li>
+          <li style={{ marginBottom: '4px' }}>Delete any default code in the editor, and paste the code block below.</li>
+          <li style={{ marginBottom: '4px' }}>Click <strong>Deploy</strong> (top right) ➡️ <strong>New deployment</strong>.</li>
+          <li style={{ marginBottom: '4px' }}>Click the gear icon next to "Select type" and choose <strong>Web App</strong>.</li>
+          <li style={{ marginBottom: '4px' }}>Configure it: Set "Execute as" to <strong>Me</strong> and "Who has access" to <strong>Anyone</strong> (this allows the bot to write data securely).</li>
+          <li style={{ marginBottom: '4px' }}>Click <strong>Deploy</strong>, copy the generated <strong>Web App URL</strong>, and paste it into the "Google Sheets Webhook URL" field above!</li>
+        </ol>
+        
+        <label className="form-label" style={{ fontSize: '12.5px', color: 'var(--color-charcoal)', fontWeight: 'bold', marginTop: '12px', display: 'block' }}>Click inside box to copy Apps Script Code:</label>
+        <textarea
+          readOnly
+          className="form-textarea"
+          style={{ minHeight: '140px', fontFamily: 'monospace', fontSize: '12px', backgroundColor: '#f1f5f9', color: '#334155', cursor: 'pointer' }}
+          value={`function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    
+    // Add headers if the sheet is empty
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["Lead ID", "Name", "Email", "Phone", "Service Selected", "Source", "Registered At"]);
+    }
+    
+    sheet.appendRow([
+      data.id,
+      data.name,
+      data.email,
+      data.phone,
+      data.service,
+      data.source,
+      new Date(data.timestamp).toLocaleString()
+    ]);
+    return ContentService.createTextOutput(JSON.stringify({ "result": "success" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ "result": "error", "error": error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}`}
+          onClick={(e) => { 
+            e.target.select(); 
+            navigator.clipboard.writeText(e.target.value);
+            alert('Google Apps Script code copied to clipboard!'); 
+          }}
+        />
+        <span style={{ fontSize: '11px', color: 'var(--color-text-light)', display: 'block', marginTop: '6px' }}>
+          💡 Tip: Click inside the gray text box above to copy the script code immediately.
+        </span>
+      </div>
+
+      <h3 style={{ fontSize: '16px', margin: '20px 0 10px 0', borderBottom: '1px solid var(--color-border)', paddingBottom: '6px' }}>
         Nodemailer SMTP Email Settings
       </h3>
 
